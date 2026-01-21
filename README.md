@@ -1,5 +1,15 @@
 # CTFApp
 
+## Gereksinimler
+
+- **Python 3.12 veya 3.13 (Önerilen)** - Python 3.14 için özel kurulum gerekir
+- pip (Python paket yöneticisi)
+
+### Python 3.14 Kullanıyorsanız
+
+Python 3.14 yeni bir sürüm olduğu için SQLAlchemy'nin development sürümü gerekir.
+Kurulum adımları aşağıdaki gibi yapılmalıdır.
+
 ## Kurulum
 
 1. Gereksinimleri yükleyin:
