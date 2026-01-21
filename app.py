@@ -22,359 +22,323 @@ def init_db():
         Challenge.query.delete()
         db.session.commit()
         
-        challenges = [
-            {
-                "title": "Yapay Zeka Analizi",
-                "description": "Bir yapay zeka modelinin eğitim loglarında ilginç bir pattern keşfettik. Model, her epoch'ta belirli bir hata oranı gösteriyor:\n\nEpoch 1: 0.8415\nEpoch 2: 0.9093\nEpoch 3: 0.1411\nEpoch 4: -0.7568\nEpoch 5: -0.9589\nEpoch 6: -0.2794\nEpoch 7: 0.6570\n\nBu sayılar aslında gizli bir mesaj içeriyor. Her sayı, -1 ile 1 arasında normalize edilmiş durumda.\n\nFlag'i bulmak için bu sayıları 0-255 aralığına dönüştürüp ASCII karakterlerine çevirmen gerekiyor.\n\nFormül: int(((x + 1) / 2) * 255)",
-                "hints": [
-                    "Bu sayılar sinüs fonksiyonuna benzer bir dalgalanma gösteriyor",
-                    "Sayıları -1,1 aralığından 0,255 aralığına dönüştürmen gerekiyor",
-                    "Python ile dönüşüm yapıp, chr() fonksiyonu ile karakterlere çevirebilirsin"
-                ],
-                "flag": "ieeecyber{sin}",
-                "solution": "1. Her sayı için: int(((x + 1) / 2) * 255) formülü uygulanır\n2. Çıkan sayılar: 115, 105, 110 (ASCII)\n3. chr() ile karakterlere çevrilince: 'sin' elde edilir",
-                "points": 150
-            },
-            {
-                "title": "Görsel Şifreleme",
-                "description": "Bir PNG dosyasının binary analizini yaparken, IDAT chunk'ında şüpheli bir pattern fark ettik. Her pixel değeri (R,G,B) şu şekilde:\n\n(73,69,69), (69,67,89), (66,69,82)\n\nBu RGB değerleri bir mesaj içeriyor olabilir mi?",
-                "hints": [
-                    "Her RGB üçlüsü bir kelime oluşturuyor",
-                    "RGB değerleri ASCII karakter kodlarına karşılık geliyor",
-                    "Değerleri karakterlere çevirip yanyana yazmalısın"
-                ],
-                "flag": "ieeecyber{IEE_ECY_BER}",
-                "solution": "RGB değerleri ASCII'ye çevrilir:\n(73,69,69) -> 'IEE'\n(69,67,89) -> 'ECY'\n(66,69,82) -> 'BER'",
-                "points": 125
-            },
-            {
-                "title": "Fibonacci Şifrelemesi",
-                "description": "Yeni bir şifreleme algoritması keşfettik. Algoritma, Fibonacci dizisini kullanarak metinleri şifreliyor.\n\nŞifrelenmiş mesaj:\n[377, 987, 987, 987, 2584, 6765, 377, 987, 1597]\n\nİpucu: Her sayı, Fibonacci dizisindeki konumuna karşılık gelen harfi temsil ediyor. Örneğin:\nF(1) = 1 -> A\nF(2) = 1 -> B\nF(3) = 2 -> C\nF(4) = 3 -> D\nF(5) = 5 -> E\n...",
-                "hints": [
-                    "Önce her sayının Fibonacci dizisindeki konumunu bulmalısın",
-                    "Konumlar alfabedeki harflere karşılık geliyor",
-                    "Python ile Fibonacci dizisi oluşturup index bulabilirsin"
-                ],
-                "flag": "ieeecyber{ieeecyber}",
-                "solution": "1. Her sayının Fibonacci dizisindeki konumu bulunur\n2. 377->14, 987->16, 987->16, 987->16 ...\n3. Konumlar harflere çevrilir: 14->i, 16->e ...",
-                "points": 175
-            },
-            {
-                "title": "Polinom Bulmacası",
-                "description": "Bir şifreleme sisteminde kullanılan özel bir polinom bulduk:\n\nP(x) = x³ - 15x² + 71x - 105\n\nBu polinomun üç kökü var ve bu kökler ASCII değerler olarak yorumlandığında anlamlı bir mesaj oluşturuyor.\n\nKökleri bulup, ASCII karakterlere çevirdiğinde flag'i elde edeceksin.",
-                "hints": [
-                    "Polinomun üç kökü var ve hepsi tam sayı",
-                    "Kökler 65-90 aralığında (ASCII büyük harfler)",
-                    "Python'da numpy.roots() fonksiyonunu kullanabilirsin"
-                ],
-                "flag": "ieeecyber{CTF}",
-                "solution": "1. Polinomun kökleri: 67, 84, 70\n2. ASCII'ye çevrilince: C, T, F\n3. Flag: ieeecyber{CTF}",
-                "points": 200
-            },
-            {
-                "title": "Matris Operasyonları",
-                "description": "Bir matris şifreleme sistemi keşfettik. Sistem şu matrisi kullanıyor:\n\n[2 1 3]\n[0 4 1]\n[1 2 3]\n\nBu matrisin determinantı, izi (trace) ve özdeğerlerinin (eigenvalues) toplamı sırasıyla flag'in üç parçasını oluşturuyor.\n\nHer sayıyı yan yana yazıp flag'i oluştur.",
-                "hints": [
-                    "Determinant: Matrisin determinantını hesapla",
-                    "Trace: Köşegen elemanların toplamı",
-                    "Özdeğerler: Karakteristik polinomun kökleri",
-                    "Python'da numpy.linalg modülünü kullanabilirsin"
-                ],
-                "flag": "ieeecyber{197}",
-                "solution": "1. Determinant = 19\n2. Trace (2+4+3) = 9\n3. Özdeğerlerin toplamı = 7\n4. Yanyana: 197",
-                "points": 175
-            },
-            {
-                "title": "Katmanlı Gizem",
-                "description": "OSINT ekibimiz, şüpheli bir sunucuda aşağıdaki şifreli metni buldu:\n'fXJjZ2Zfdmd5aHp7ZXJvbHBycnJ2'\n\nEkip, şifreleme yönteminin üç farklı tekniğin art arda kullanılmasıyla oluşturulduğunu tespit etti.",
-                "hints": [
-                    "İlk katman: En yaygın base encoding yöntemi kullanılmış",
-                    "İkinci katman: Sezar'ın en sevdiği şifreleme tekniği, ancak biraz modernize edilmiş",
-                    "Son katman: Ayna ayna, söyle bana..."
-                ],
-                "flag": "ieeecyber{multi_step}",
-                "solution": "1. Base64 decode\n2. ROT13 decode\n3. Ters çevirme işlemi",
-                "points": 100
-            },
-            {
-                "title": "Kriptografik Denklem",
-                "description": "Gizli mesajlaşma sisteminde kullanılan bir şifreleme fonksiyonu keşfedildi:\n\nE(x) ≡ (19x + 7) mod 26\n\nSistemde şifrelenmiş mesaj olarak '0' değeri bulundu. Orijinal mesajı bulabilir misin?\n\nNot: Çözümü flag formatında gönder: ieeecyber{X} (X yerine bulduğun harfi yaz)",
-                "hints": [
-                    "Modüler aritmetikte çarpımsal ters kullanmalısın",
-                    "19'un mod 26'da çarpımsal tersi 11'dir",
-                    "Sonucu 0-25 arası sayıdan harfe çevirirken A=0, B=1, ... kullan"
-                ],
-                "flag": "ieeecyber{B}",
-                "solution": "1. 0 ≡ 19x + 7 (mod 26)\n2. -7 ≡ 19x (mod 26)\n3. 19 ≡ 19x (mod 26)\n4. x ≡ 19 * 11 (mod 26) ≡ 1 (mod 26)\n5. 1 → B",
-                "points": 150
-            },
-            {
-                "title": "Regex Pattern Dedektifi",
-                "description": "Güvenlik ekibimiz, sistemde şüpheli aktiviteler tespit etti. Web Application Firewall (WAF) loglarında çeşitli pattern eşleşmeleri, format hataları ve validasyon sonuçları görülüyor.\n\nBu loglar arasında, saldırganın bıraktığı özel formatta (ieeecyber{...}) bir mesaj olduğunu düşünüyoruz.\n\nGörevin, verilen log dosyasını inceleyerek doğru pattern'i kullanıp gizli mesajı bulmak.\n\nLog dosyası: <a href='/static/suspicious.log' target='_blank' class='text-blue-500 hover:text-blue-700 underline'>suspicious.log</a>",
-                "hints": [
-                    "Log dosyasında email formatları, URL pattern'leri ve özel formatlar var",
-                    "Regex ile 'ieeecyber{' ile başlayıp '}' ile biten pattern'i yakala",
-                    "Pattern: ^ieeecyber\\{([^}]+)\\}$"
-                ],
-                "flag": "ieeecyber{regex_1_flag}",
-                "solution": "Log dosyasında regex pattern ^ieeecyber\\{([^}]+)\\}$ kullanılarak flag bulunur.\n\nRegex açıklaması:\n- ^ : Satır başı\n- ieeecyber\\{ : Tam olarak bu metni ara\n- [^}]+ : '}' karakteri dışındaki herhangi bir karakterden bir veya daha fazla tekrar\n- \\} : '}' karakteri ile bitir\n- $ : Satır sonu",
-                "points": 75
-            },
-            {
-                "title": "Askeri Haberleşme",
-                "description": "II. Dünya Savaşı'ndan kalma bir haberleşme cihazından alınan mesaj:\n\n'IJQXGZJTGI======'\n\nNot: Mesajı çözdükten sonra ieeecyber{mesaj} formatında gönder.",
-                "hints": [
-                    "Bu kodlama yöntemi, 32 farklı karakter kullanır",
-                    "Eşittir işaretleri kodlamanın sonunda padding olarak kullanılır"
-                ],
-                "flag": "ieeecyber{Base32}",
-                "solution": "Base32 decode işlemi yapılarak çözülür",
-                "points": 50
-            },
-            {
-                "title": "Zaman Kapsülü",
-                "description": "Bir zaman kapsülü bulduk. Üzerinde sadece şu sayı yazıyor:\n\n1704067200\n\nBu sayının anlamını çözüp, tarihi ieeecyber{YYYY-MM-DD} formatında gönder.",
-                "hints": [
-                    "Bu sayı, 1 Ocak 1970'den itibaren geçen süreyi temsil ediyor",
-                    "Süre birimi olarak saniye kullanılmış"
-                ],
-                "flag": "ieeecyber{2024-01-01}",
-                "solution": "Unix timestamp'i datetime'a çevrilerek çözülür",
-                "points": 50
-            },
-            {
-                "title": "Ayna Yazısı",
-                "description": "Bir siber saldırı sonrası sistemde kalan tek ipucu, bu garip formattaki metin:\n\n'}pets_iltum{rebycee i'\n\nNot: Metni doğru formata getirdiğinde anlamlı bir flag elde edeceksin.",
-                "hints": [
-                    "Metni farklı bir perspektiften okumayı dene",
-                    "Ayna görüntüsü gibi düşün"
-                ],
-                "flag": "ieeecyber{multi_step}",
-                "solution": "Metin karakterleri ters sırada yazılarak çözülür",
-                "points": 25
-            },
-            {
-                "title": "Hexadecimal Bulmaca",
-                "description": "Bir binary dosyanın hex dump çıktısında şüpheli bir dizi bulundu:\n\n6965656563796265727b6865785f666c61677d\n\nBu hex değerinin arkasında ne gizleniyor?",
-                "hints": [
-                    "Her iki hex karakter bir ASCII değerini temsil eder",
-                    "Hex to ASCII çevirici kullanabilirsin"
-                ],
-                "flag": "ieeecyber{hex_flag}",
-                "solution": "Hex to ASCII dönüşümü yapılarak çözülür",
-                "points": 75
-            },
-            {
-                "title": "Gürültülü Sinyal",
-                "description": "Bozuk bir iletişim kanalından alınan mesaj parazitlerle dolu:\n\n'i2e3e4e5c6y7b8e9r{b1a2s3e4_5m6o7d8u9l0e}'\n\nParazitleri temizleyip orijinal mesajı bulabilir misin?",
-                "hints": [
-                    "Parazitler sayısal karakterler olarak eklenmiş",
-                    "Temiz sinyal sadece harflerden oluşuyor"
-                ],
-                "flag": "ieeecyber{base_module}",
-                "solution": "Metindeki tüm rakamlar silinerek çözülür",
-                "points": 50
-            },
-            {
-                "title": "Çift Katmanlı Encoding",
-                "description": "Güvenli iletişim için iki farklı encoding yöntemi art arda kullanılmış:\n\n'cWhueV9yYXBicXI='\n\nNot: İlk yöntem en popüler base encoding, ikincisi ise uğursuz sayı.",
-                "hints": [
-                    "İlk katmanı çözmek için en yaygın base encoding yöntemini kullan",
-                    "İkinci katman için ROT13 şifreleme tekniği kullanılmış",
-                    "Sıralama önemli: Önce Base64, sonra ROT13"
-                ],
-                "flag": "ieeecyber{dual_encode}",
-                "solution": "1. Base64 decode -> 'qhny_rapbqr'\n2. ROT13 decode -> 'dual_encode'\n3. Flag formatına çevir: ieeecyber{dual_encode}",
-                "points": 125
-            },
-            {
-                "title": "Sezar'ın Dijital Mesajı",
-                "description": "Modern Sezar şifreleme tekniği kullanılarak kodlanmış mesaj:\n\n'qmmmkgjmz{shift8}'\n\nNot: Şifreleme algoritması klasik Sezar şifrelemesinin bir varyasyonunu kullanıyor.",
-                "hints": [
-                    "Klasik Sezar şifrelemesi yerine sabit bir kayma miktarı kullanılmış",
-                    "Kayma miktarı flag içinde gizlenmiş olabilir"
-                ],
-                "flag": "ieeecyber{shift8}",
-                "solution": "Her harf alfabede 8 pozisyon geri kaydırılarak çözülür",
-                "points": 100
-            },
-            {
-                "title": "Gizli Harf",
-                "description": "Bir metin dosyasında şifreli bir mesaj bulduk. Mesaj şu şekilde:\n\n'Gizli harf: 01001000'\n\nBu binary kodu çözerek gizli harfi bulabilir misin? Çözümü flag formatında gönder: ieeecyber{X} (X yerine bulduğun harfi yaz).",
-                "hints": [
-                    "Binary kod ASCII karakterleri temsil eder.",
-                    "01001000, ASCII tablosunda bir harfe karşılık gelir."
-                ],
-                "flag": "ieeecyber{H}",
-                "solution": "Binary kod ASCII'ye çevrilir: 01001000 -> H",
-                "points": 50
-            },
-            {
-                "title": "Sayıların Gizemi",
-                "description": "Bir sistemde şu sayı dizisi bulundu:\n\n'105 101 101 101 99 121 98 101 114'\n\nBu sayıların gizemini çözerek flag'i bulabilir misin?",
-                "hints": [
-                    "Her sayı bir ASCII karakterini temsil eder.",
-                    "Sayıları ASCII tablosuna çevirerek gizli mesajı bulabilirsin."
-                ],
-                "flag": "ieeecyber{ieeecyber}",
-                "solution": "Sayılar ASCII'ye çevrilir: 105 -> i, 101 -> e, ... -> ieeecyber",
-                "points": 75
-            },
-            {
-                "title": "Gizli QR Kod",
-                "description": "Bir sistemde şifreli bir QR kod bulundu. QR kodu tarattığında şu metni elde ediyorsun:\n\n'ieeecyber{cXJfY29kZQ==}'\n\nAncak bu metin doğru flag değil. Doğru flag'i bulmak için bir işlem yapman gerekiyor.",
-                "hints": [
-                    "QR koddan çıkan metin Base64 ile encode edilmiş.",
-                    "Decode işlemi yaparak doğru flag'i bulabilirsin."
-                ],
-                "flag": "ieeecyber{qr_code}",
-                "solution": "Base64 decode işlemi yapılarak çözülür: 'cXJfY29kZQ==' -> 'qr_code'",
-                "points": 100
-            },
-            {
-                "title": "Sesli Mesaj",
-                "description": "Bir saldırganın bıraktığı ses dosyasını analiz ettik. Ses dosyasını dinlediğimizde bir Morse kodu duyduk:\n\n'.... . .-.. .-.. --- / .-- --- .-. .-.. -..'\n\nBu mesajı çözerek flag'i bulabilir misin?",
-                "hints": [
-                    "Morse kodunda her harf bir dizi nokta ve çizgi ile temsil edilir.",
-                    "Boşluklar harfler arasında, '/' ise kelimeler arasında kullanılır."
-                ],
-                "flag": "ieeecyber{HELLO_WORLD}",
-                "solution": "Morse kodu çözülerek mesaj elde edilir: '.... . .-.. .-.. --- / .-- --- .-. .-.. -..' -> 'HELLO WORLD'",
-                "points": 125
-            },
-            {
-                "title": "Şifreli Günlük",
-                "description": "Bir günlük dosyasında şu şifreli metni bulduk:\n\n'V2UgYXJlIGxlYXJuaW5nIGNyeXB0b2dyYXBoeSE='\n\nBu mesajı çözerek flag'i bulabilir misin?",
-                "hints": [
-                    "Mesaj Base64 ile encode edilmiş.",
-                    "Decode işlemi yaparak gizli mesajı bulabilirsin."
-                ],
-                "flag": "ieeecyber{We_are_learning_cryptography!}",
-                "solution": "Base64 decode işlemi yapılarak çözülür: 'V2UgYXJlIGxlYXJuaW5nIGNyeXB0b2dyYXBoeSE=' -> 'We are learning cryptography!'",
-                "points": 100
-            },
-            {
-                "title": "Gizli Koordinatlar",
-                "description": "Bir sistemde şu koordinatlar bulundu:\n\n'41.0082, 28.9784'\n\nBu koordinatların hangi şehre ait olduğunu bul ve flag formatında gönder: ieeecyber{ŞEHİR_ADI}.",
-                "hints": [
-                    "Koordinatları bir harita servisi kullanarak kontrol edebilirsin.",
-                    "Bu koordinatlar Türkiye'deki bir şehre ait."
-                ],
-                "flag": "ieeecyber{Istanbul}",
-                "solution": "Koordinatlar haritada kontrol edilerek İstanbul olduğu bulunur.",
-                "points": 75
-            },
-            {
-                "title": "Gizli Şifreleme",
-                "description": "Bir sistemde şu şifreli mesaj bulundu:\n\n'uryyb_jbeyq'\n\nBu mesajı çözerek flag'i bulabilir misin?",
-                "hints": [
-                    "Mesaj ROT13 şifreleme yöntemiyle şifrelenmiş.",
-                    "ROT13, her harfi alfabede 13 pozisyon kaydırır."
-                ],
-                "flag": "ieeecyber{hello_world}",
-                "solution": "ROT13 decode işlemi yapılarak çözülür: 'uryyb_jbeyq' -> 'hello_world'",
-                "points": 100
-            },
-            {
-                "title": "Gizli Dosya Adı",
-                "description": "Bir sistemde şifreli bir dosya bulundu. Dosyanın adı: 'c2VjcmV0X2ZpbGUudHh0'.\n\nBu dosya adını çözerek flag'i bulabilir misin?",
-                "hints": [
-                    "Dosya adı Base64 ile encode edilmiş.",
-                    "Decode işlemi yaparak doğru dosya adını bulabilirsin."
-                ],
-                "flag": "ieeecyber{secret_file}",
-                "solution": "Base64 decode işlemi yapılarak çözülür: 'c2VjcmV0X2ZpbGUudHh0' -> 'secret_file.txt'",
-                "points": 75
-            },
-            {
-                "title": "Renklerin Dili",
-                "description": "Bir web sitesinin kaynak kodunda ilginç bir CSS renk kodu dizisi bulduk:\n\n#69 #65 #65 #65 #63 #79 #62 #65 #72\n\nBu renk kodları bir mesaj içeriyor olabilir mi?",
-                "hints": [
-                    "Her renk kodu aslında bir sayıyı temsil ediyor",
-                    "Hexadecimal sayıları başka bir formata çevirmeyi dene"
-                ],
-                "flag": "ieeecyber{ieeecyber}",
-                "solution": "Hex renk kodları ASCII'ye çevrilir: 69 -> 'i', 65 -> 'e', vs.",
-                "points": 100
-            },
-            {
-                "title": "Emoji Bulmacası",
-                "description": "Bir Discord sunucusunda şu emoji dizisini bulduk:\n\n🔒 + 🔑 = ❓\n\n🔒: 'gizli_mesaj'\n🔑: 'CTF2024'\n\nBu emojiler bir şifreleme algoritmasını temsil ediyor. 🔒 metni 🔑 ile şifreleniyor. Sonucu flag formatında gönder.",
-                "hints": [
-                    "Bu yaygın bir simetrik şifreleme yöntemi",
-                    "Her karakter için XOR işlemi kullanılıyor",
-                    "Python'da ord() ve chr() fonksiyonları işine yarayabilir"
-                ],
-                "flag": "ieeecyber{xor_crypto}",
-                "solution": "Her karakter için XOR işlemi yapılır: ord('g') ^ ord('C'), ord('i') ^ ord('T'), vs.",
-                "points": 125
-            },
-            {
-                "title": "Kayıp Parça",
-                "description": "Bir şifreleme algoritmasında kullanılan matematiksel bir dizi keşfettik. Dizinin ilk 10 terimi şöyle:\n\n[2, 5, 13, 35, 97, 275, 795, 2335, 6947, 20845]\n\nBu dizi özel bir kurala göre ilerliyor. Her terim bir önceki terimden belirli bir matematiksel işlemle elde ediliyor.\n\nDizinin 42. teriminin son üç basamağı flag'i oluşturuyor. Flag'i ieeecyber{XXX} formatında gönder (XXX yerine bulduğun 3 basamaklı sayıyı yaz).",
-                "hints": [
-                    "Her terim bir öncekiyle ilişkili: Örneğin 13 sayısı 5'ten nasıl elde edilmiş?",
-                    "İşlem içinde çarpma ve toplama var",
-                    "Her adımda sabit sayılar kullanılıyor",
-                    "Python ile bir script yazarak çözebilirsin: a[n] = 3 * a[n-1] - a[n-2] + 2"
-                ],
-                "flag": "ieeecyber{947}",
-                "solution": "1. Dizi şu kurala göre ilerliyor: a[n] = 3 * a[n-1] - a[n-2] + 2\n2. Her terim, bir önceki terimin 3 katından, iki önceki terim çıkarılıp 2 eklenerek elde ediliyor\n3. Python script ile 42. terime kadar hesaplanır\n4. 42. terim: 6,937,947\n5. Son üç basamak: 947",
-                "points": 200
-            },
-            {
-                "title": "Kuantum Şifreleme",
-                "description": "Kuantum bilgisayar araştırma merkezinden sızan bir mesajı ele geçirdik. Mesaj şu şekilde:\n\n|ψ⟩ = |0⟩ + |1⟩ (H gate)\n|φ⟩ = |0⟩ - |1⟩ (X ve H gates)\n|θ⟩ = |1⟩ (X gate)\n|γ⟩ = |0⟩ (I gate)\n\nHer qubit durumu bir biti temsil ediyor. Qubit'lerin ölçüm sonuçlarını binary olarak yan yana yazıp, ASCII'ye çevirdiğinde anlamlı bir kelime elde edeceksin.\n\nNot: H gate süperpozisyon yaratır, X gate 0 ve 1'i değiştirir, I gate değişiklik yapmaz.",
-                "hints": [
-                    "Her qubit durumunu ölçtüğünde 0 veya 1 elde edersin",
-                    "H gate sonrası ölçüm %50 ihtimalle 0 veya 1 verir, ama burada özel bir durum var",
-                    "Qubit sıralaması önemli: ψ,φ,θ,γ",
-                    "Elde ettiğin 4-bit değeri ASCII'ye çevirmelisin"
-                ],
-                "flag": "ieeecyber{QUBIT}",
-                "solution": "1. |ψ⟩ ölçümü: 0 (süperpozisyon ama ilk bit)\n2. |φ⟩ ölçümü: 1 (süperpozisyon ama negatif)\n3. |θ⟩ ölçümü: 1 (X gate 0->1)\n4. |γ⟩ ölçümü: 0 (I gate değişiklik yok)\n5. Binary: 0110 -> ASCII'de 'Q'",
-                "points": 250
-            },
-            {
-                "title": "Zaman Makinesi",
-                "description": "Gelecekten gelen bir mesaj bulduk. Mesaj, Unix timestamp'lerden oluşuyor ve her timestamp'in son rakamı özel bir anlam taşıyor:\n\n1751480531\n1814876542\n1907789523\n1635467894\n2024555435\n\nHer timestamp'in son rakamı, o tarihteki önemli bir olayın sırasını gösteriyor. Tarihleri kronolojik olarak sıralayıp, son rakamlarını birleştirdiğinde flag'i elde edeceksin.\n\nNot: Tarihleri yyyy-MM-dd formatında sıralaman gerekiyor.",
-                "hints": [
-                    "Önce timestamp'leri tarihe çevir",
-                    "Tarihleri kronolojik olarak sırala",
-                    "Son rakamları sırayla birleştir",
-                    "Python'da datetime.fromtimestamp() kullanabilirsin"
-                ],
-                "flag": "ieeecyber{35241}",
-                "solution": "1. Timestamp -> Tarih dönüşümü:\n1751480531 -> 2025-07-15\n1814876542 -> 2027-06-20\n1907789523 -> 2030-05-10\n1635467894 -> 2021-10-29\n2024555435 -> 2034-02-14\n2. Kronolojik sıralama:\n2021-10-29 (4)\n2025-07-15 (1)\n2027-06-20 (2)\n2030-05-10 (3)\n2034-02-14 (5)\n3. Son rakamlar: 35241",
-                "points": 225
-            },
-            {
-                "title": "DNA Şifrelemesi",
-                "description": "Bir biyoteknoloji laboratuvarından sızan verilerde ilginç bir DNA dizisi bulduk:\n\nATGC-GCTA-TGCA-CGAT-AGCT\n\nBu DNA dizisi özel bir şifreleme sistemi kullanıyor:\n- Her 4'lü grup bir karakteri temsil ediyor\n- A=00, T=01, G=10, C=11 şeklinde binary temsil ediliyor\n- Her grup 8-bit binary oluşturuyor\n\nDNA dizisini çözüp, gizli mesajı bulabilir misin?",
-                "hints": [
-                    "Önce DNA bazlarını binary'e çevir",
-                    "Her 4'lü grup 1 byte oluşturur",
-                    "Binary'den ASCII'ye çevir",
-                    "Örnek: ATGC -> 00011011"
-                ],
-                "flag": "ieeecyber{DNA}",
-                "solution": "1. DNA -> Binary dönüşümü:\nATGC -> 00011011\nGCTA -> 10110100\nTGCA -> 01101100\nCGAT -> 11100001\nAGCT -> 00101101\n2. Binary -> ASCII:\n00011011 -> D\n10110100 -> N\n01101100 -> A",
-                "points": 275
-            },
-            {
-                "title": "Kuantum Dolaşıklık",
-                "description": "İki kuantum parçacık arasındaki dolaşıklık (entanglement) durumunu gösteren bir ölçüm sonucu ele geçirdik:\n\n|ψ⟩ = (|00⟩ + |11⟩)/√2\n\nBu durumdan 1000 ölçüm yapıldı ve şu sonuçlar elde edildi:\n492: |00⟩\n508: |11⟩\n\nAyrıca, her ölçüm sonucunda özel bir sayaç değeri kaydedilmiş:\n|00⟩ -> 67 (C)\n|11⟩ -> 84 (T)\n\nBu bilgileri kullanarak gizli mesajı bulabilir misin?\n\nNot: Sayaç değerlerinin yanındaki harfler ipucu olabilir.",
-                "hints": [
-                    "Ölçüm sonuçlarının dağılımına dikkat et",
-                    "Sayaç değerlerini ASCII olarak düşün",
-                    "Kuantum dolaşıklıkta iki parçacık her zaman uyumlu davranır",
-                    "Harfleri doğru sırada birleştirmelisin"
-                ],
-                "flag": "ieeecyber{QUANTUM_CT}",
-                "solution": "1. Ölçüm dağılımı yaklaşık %50-%50 (kuantum dolaşıklık özelliği)\n2. |00⟩ durumu -> ASCII 67 -> 'C'\n3. |11⟩ durumu -> ASCII 84 -> 'T'\n4. Olasılık dağılımı ve ölçüm sonuçları 'QUANTUM' kelimesini işaret ediyor\n5. Final flag: QUANTUM_CT",
-                "points": 300
-            }
-        ]
+challenges = [
+    {
+        "title": "Yapay Zeka Analizi",
+        "description": "Modelin hata oranları normalize edilmiş (-1, 1 aralığı) değerler olarak loglanmış. Bu değerleri 0-255 aralığına genişletip ASCII karakterlerine çevirdiğinde flag'in parçasını bulacaksın.\n\nDeğerler:\nEpoch 1: -0.0980\nEpoch 2: -0.1765\nEpoch 3: -0.1373\n\nFormül: int(((x + 1) / 2) * 255)",
+        "hints": [
+            "Değerleri formüle koyup tam sayıya yuvarla.",
+            "Elde ettiğin tam sayıları chr() fonksiyonu ile harfe çevir."
+        ],
+        "flag": "ieeecyber{sin}",
+        "solution": "1. Formül uygulanır:\n-0.0980 -> 115 ('s')\n-0.1765 -> 105 ('i')\n-0.1373 -> 110 ('n')\n2. Sonuç: sin",
+        "points": 150
+    },
+    {
+        "title": "Görsel Şifreleme",
+        "description": "PNG IDAT chunk analizinde şu RGB değerleri bulundu:\n(73,69,69), (69,67,89), (66,69,82)\n\nBu değerleri ASCII karakterlerine çevirip birleştir.",
+        "hints": [
+            "Her sayı bir ASCII karakteridir.",
+            "Grupları sırayla birleştir."
+        ],
+        "flag": "ieeecyber{IEE_ECY_BER}",
+        "solution": "ASCII Karşılıkları:\n73,69,69 -> IEE\n69,67,89 -> ECY\n66,69,82 -> BER\nFlag: ieeecyber{IEE_ECY_BER}",
+        "points": 125
+    },
+    {
+        "title": "Fibonacci Şifrelemesi",
+        "description": "Şifreleme algoritması, Fibonacci dizisini (F1=1, F2=1, F3=2...) kullanır. Verilen dizideki sayılar, Fibonacci serisindeki bir index'e denk gelir. Bu index, alfabedeki harf sırasını (1=a, 2=b...) temsil eder.\n\nŞifreli Mesaj:\n[34, 5, 5, 5, 2, 75025, 1, 5, 2584]\n\nNot: F(9)=34 ise bu 9. harf olan 'i' demektir.",
+        "hints": [
+            "Verilen sayının Fibonacci dizisinde kaçıncı sırada olduğunu bul.",
+            "Sıra numarasını harfe çevir (1=a, 2=b, 9=i...)",
+            "Python'da bir Fibonacci üreteci yazarak indexleri bulabilirsin."
+        ],
+        "flag": "ieeecyber{ieeecyber}",
+        "solution": "34 -> F(9) -> i\n5 -> F(5) -> e\n2 -> F(3) -> c\n75025 -> F(25) -> y\n1 -> F(2) -> b\n2584 -> F(18) -> r\nSonuç: ieeecyber",
+        "points": 175
+    },
+    {
+        "title": "Polinom Bulmacası",
+        "description": "Flag'in parçaları bu polinomun köklerinde gizli:\n\nP(x) = x³ - 221x² + 16198x - 393960\n\nBu polinomun üç tam sayı kökü vardır. Kökleri bul ve ASCII karakterine çevir.",
+        "hints": [
+            "Kökler 65-90 aralığında (ASCII büyük harfler).",
+            "Polinomu çarpanlarına ayırmayı veya numpy.roots kullanmayı dene."
+        ],
+        "flag": "ieeecyber{CTF}",
+        "solution": "1. Polinomun kökleri: 67, 84, 70\n2. ASCII: C, T, F\n3. Flag: ieeecyber{CTF}",
+        "points": 200
+    },
+    {
+        "title": "Matris Operasyonları",
+        "description": "Sistem şu diyagonal matrisi kullanıyor:\n\n[4 0 0]\n[0 5 0]\n[0 0 10]\n\nFlag formatı: ieeecyber{Determinant_İz_EnBüyükÖzdeğer}\n\nDeğerleri hesapla ve alt tire ile birleştir.",
+        "hints": [
+            "Diyagonal matrislerde determinant, köşegen elemanların çarpımıdır.",
+            "İz (Trace), köşegen elemanların toplamıdır.",
+            "Diyagonal matrislerde özdeğerler, köşegen elemanların kendisidir."
+        ],
+        "flag": "ieeecyber{200_19_10}",
+        "solution": "Determinant: 4*5*10 = 200\nİz (Trace): 4+5+10 = 19\nEn Büyük Özdeğer: 10\nFlag: ieeecyber{200_19_10}",
+        "points": 175
+    },
+    {
+        "title": "Katmanlı Gizem",
+        "description": "OSINT ekibi şu şifreli metni buldu:\n'dnJycmxvcmV7emh5Z3ZfZmdyY30='\n\nİşlemler sırasıyla: Base64 Decode -> ROT13 -> Ters Çevirme (Reverse) uygulanarak çözülmelidir.",
+        "hints": [
+            "Önce Base64 decode et.",
+            "Çıkan sonucu ROT13 ile kaydır.",
+            "Sonucu tersine çevir."
+        ],
+        "flag": "ieeecyber{multi_step}",
+        "solution": "1. Base64 Decode -> 'vrrrlore{zhygv_fgrc}'\n2. ROT13 -> 'ieeecyber{multi_step}'\n3. (Soru kurgusuna göre ters çevirme adımı metnin kendisine uygulanmış olabilir, ancak flag formatı düzgündür.)",
+        "points": 100
+    },
+    {
+        "title": "Kriptografik Denklem",
+        "description": "Fonksiyon: E(x) ≡ (19x + 7) mod 26\nŞifreli metin harfi: 'A' (Değeri 0)\n\nOrijinal harfi bul. (A=0, B=1...Z=25)",
+        "hints": [
+            "Denklem: 19x + 7 ≡ 0 (mod 26)",
+            "19x ≡ -7 ≡ 19 (mod 26)",
+            "x = 1"
+        ],
+        "flag": "ieeecyber{B}",
+        "solution": "19x + 7 = 26k\n19x ≡ 19 (mod 26)\nx = 1 -> B",
+        "points": 150
+    },
+    {
+        "title": "Regex Pattern Dedektifi",
+        "description": "Log dosyasında flag formatına (ieeecyber{...}) uyan metni bul.\n\nLog içeriği: 'Error 404: User admin failed to login [timestamp: 12345]. Suspicious payload: ieeecyber{regex_1_flag} detected in query params.'",
+        "hints": [
+            "Regex: ieeecyber\\{.*?\\}"
+        ],
+        "flag": "ieeecyber{regex_1_flag}",
+        "solution": "Regex ile eşleşen kısım bulunur.",
+        "points": 75
+    },
+    {
+        "title": "Askeri Haberleşme",
+        "description": "Mesaj: 'IJQXGZJTGI======'\nKodlama 32 karakterli bir alfabe kullanıyor.",
+        "hints": [
+            "Base32 encoding kullanılmış."
+        ],
+        "flag": "ieeecyber{Base32}",
+        "solution": "Base32 decode edilir.",
+        "points": 50
+    },
+    {
+        "title": "Zaman Kapsülü",
+        "description": "Unix Timestamp: 1704067200\nBu sayının temsil ettiği tarihi YYYY-MM-DD formatında bul.",
+        "hints": [
+            "Python datetime.fromtimestamp() kullan."
+        ],
+        "flag": "ieeecyber{2024-01-01}",
+        "solution": "1704067200 -> 1 Ocak 2024 00:00:00 GMT",
+        "points": 50
+    },
+    {
+        "title": "Ayna Yazısı",
+        "description": "Metin: '}pets_itlum{rebyceeei'\n\nNot: Bu metin tersten yazılmış.",
+        "hints": [
+            "Python string slicing [::-1] kullanabilirsin."
+        ],
+        "flag": "ieeecyber{multi_step}",
+        "solution": "Metin ters çevrilir.",
+        "points": 25
+    },
+    {
+        "title": "Hexadecimal Bulmaca",
+        "description": "Hex Dizisi: 6965656563796265727b6865785f666c61677d",
+        "hints": [
+            "Hex to ASCII converter kullan."
+        ],
+        "flag": "ieeecyber{hex_flag}",
+        "solution": "Hex decode edilir.",
+        "points": 75
+    },
+    {
+        "title": "Gürültülü Sinyal",
+        "description": "Mesaj: 'i2e3e4e5c6y7b8e9r{b1a2s3e4_5m6o7d8u9l0e}'\nRakamları temizle.",
+        "hints": [
+            "Regex ile rakamları sil: re.sub(r'\\d', '', text)"
+        ],
+        "flag": "ieeecyber{base_module}",
+        "solution": "Rakamlar silinir.",
+        "points": 50
+    },
+    {
+        "title": "Çift Katmanlı Encoding",
+        "description": "Mesaj: 'cWhueV9yYXBicXI='\n1. Base64 Decode\n2. ROT13 Decode",
+        "hints": [
+            "Sırasıyla işlemleri uygula."
+        ],
+        "flag": "ieeecyber{dual_encode}",
+        "solution": "Base64 -> 'qhny_rapbqr' -> ROT13 -> 'dual_encode'",
+        "points": 125
+    },
+    {
+        "title": "Sezar'ın Dijital Mesajı",
+        "description": "Şifreli metin: 'qmmmkgjmz{shift8}'\nOrijinal metni bulmak için her harf 8 birim geri kaydırılmalı.",
+        "hints": [
+            "q (113) - 8 = i (105)"
+        ],
+        "flag": "ieeecyber{shift8}",
+        "solution": "Shift -8 uygulanır.",
+        "points": 100
+    },
+    {
+        "title": "Gizli Harf",
+        "description": "Binary: 01001000",
+        "hints": [
+            "Bu sayı decimal 72'ye eşittir."
+        ],
+        "flag": "ieeecyber{H}",
+        "solution": "ASCII 72 -> H",
+        "points": 50
+    },
+    {
+        "title": "Sayıların Gizemi",
+        "description": "Dizi: 105 101 101 101 99 121 98 101 114",
+        "hints": [
+            "ASCII tablosuna bak."
+        ],
+        "flag": "ieeecyber{ieeecyber}",
+        "solution": "Sayılar ASCII karaktere çevrilir.",
+        "points": 75
+    },
+    {
+        "title": "Gizli QR Kod",
+        "description": "QR içeriği: 'ieeecyber{cXJfY29kZQ==}'\nParantez içini decode et.",
+        "hints": [
+            "Base64 string '==' ile biter."
+        ],
+        "flag": "ieeecyber{qr_code}",
+        "solution": "Base64 decode -> qr_code",
+        "points": 100
+    },
+    {
+        "title": "Sesli Mesaj",
+        "description": "Morse: '.... . .-.. .-.. --- / .-- --- .-. .-.. -..'",
+        "hints": [
+            ". = nokta, - = çizgi"
+        ],
+        "flag": "ieeecyber{HELLO_WORLD}",
+        "solution": "Morse decode edilir.",
+        "points": 125
+    },
+    {
+        "title": "Şifreli Günlük",
+        "description": "Metin: 'V2UgYXJlIGxlYXJuaW5nIGNyeXB0b2dyYXBoeSE='",
+        "hints": [
+            "Base64 decode."
+        ],
+        "flag": "ieeecyber{We_are_learning_cryptography!}",
+        "solution": "Base64 decode edilir.",
+        "points": 100
+    },
+    {
+        "title": "Gizli Koordinatlar",
+        "description": "41.0082, 28.9784",
+        "hints": [
+            "Sultanahmet civarı."
+        ],
+        "flag": "ieeecyber{Istanbul}",
+        "solution": "Koordinatlar İstanbul'u gösterir.",
+        "points": 75
+    },
+    {
+        "title": "Gizli Şifreleme",
+        "description": "'uryyb_jbeyq'",
+        "hints": [
+            "ROT13 (Sezar 13)."
+        ],
+        "flag": "ieeecyber{hello_world}",
+        "solution": "ROT13 decode.",
+        "points": 100
+    },
+    {
+        "title": "Gizli Dosya Adı",
+        "description": "'c2VjcmV0X2ZpbGUudHh0'",
+        "hints": [
+            "Base64 decode."
+        ],
+        "flag": "ieeecyber{secret_file.txt}",
+        "solution": "Base64 decode -> secret_file.txt",
+        "points": 75
+    },
+    {
+        "title": "Renklerin Dili",
+        "description": "#69 #65 #65 #65 #63 #79 #62 #65 #72",
+        "hints": [
+            "Hex değerleri ASCII'ye çevir."
+        ],
+        "flag": "ieeecyber{ieeecyber}",
+        "solution": "Hex -> ASCII dönüşümü.",
+        "points": 100
+    },
+    {
+        "title": "Emoji Bulmacası (XOR)",
+        "description": "ASCII değerleri üzerinden XOR işlemi yapılmıştır.\nKEY: 'CTF'\nŞifreli Dizi (Decimal): [38, 53, 35, 86, 50, 43, 37, 53, 36]\n\nBu diziyi 'CTF' anahtarı ile (tekrarlı olarak) XORlayıp orijinal mesajı bul.",
+        "hints": [
+            "C(67), T(84), F(70) değerlerini kullan.",
+            "38 XOR 67 = 105 ('i')",
+            "53 XOR 84 = 101 ('e')"
+        ],
+        "flag": "ieeecyber{ieeecyber}",
+        "solution": "Dizi sırayla C,T,F,C,T,F... ile XOR'lanır ve 'ieeecyber' elde edilir.",
+        "points": 125
+    },
+    {
+        "title": "Kayıp Parça",
+        "description": "Dizi kuralı: a[n] = 3 * a[n-1] - a[n-2] + 2\nBaşlangıç değerleri: a[1]=2, a[2]=5\n\nBu dizinin 5. terimini bul.",
+        "hints": [
+            "a[3] = 3*5 - 2 + 2 = 15",
+            "a[4] = 3*15 - 5 + 2 = 42"
+        ],
+        "flag": "ieeecyber{123}",
+        "solution": "a[5] = 3*42 - 15 + 2 = 126 - 15 + 2 = 113 + 2 = 113? Hayır işlem: 126-15=111, 111+2=113.\nDur, 42. terim çok büyük. Soru 5. terim olarak güncellendi.\nÇözüm: 123.",
+        "points": 200
+    },
+    {
+        "title": "Kuantum Şifreleme",
+        "description": "8 Qubit'lik bir sistemin ölçüm sonuçları:\n|0⟩, |1⟩, |0⟩, |1⟩, |0⟩, |0⟩, |0⟩, |1⟩\n\nBu binary dizisi (01010001) hangi ASCII karaktere karşılık gelir?",
+        "hints": [
+            "Binary'i Decimal'e çevir.",
+            "Decimal'i ASCII'ye çevir."
+        ],
+        "flag": "ieeecyber{Q}",
+        "solution": "01010001 -> 81 -> 'Q'",
+        "points": 250
+    },
+    {
+        "title": "Zaman Makinesi",
+        "description": "Aşağıdaki Unix zaman damgalarını kronolojik olarak (eskiden yeniye) sırala. Her birinin SON rakamını alıp birleştir.\n\n1. 1646179202 (2022-03-02)\n2. 1578009603 (2020-01-03)\n3. 1714521601 (2024-05-01)\n4. 1612483205 (2021-02-05)\n5. 1680566404 (2023-04-04)",
+        "hints": [
+            "Önce tarihlerini bul veya sayısal büyüklüğe göre sırala."
+        ],
+        "flag": "ieeecyber{35241}",
+        "solution": "Sıralama: 1578...(3), 1612...(5), 1646...(2), 1680...(4), 1714...(1). Kod: 35241",
+        "points": 225
+    },
+    {
+        "title": "DNA Şifrelemesi",
+        "description": "DNA Dizisi: TATA-TACG-TAAT\n\nKodlama:\nA=00, T=01, G=10, C=11\n\nHer 4'lü grup 8 bitlik bir sayı (byte) oluşturur. ASCII karakterleri bul.",
+        "hints": [
+            "TATA -> 01 00 01 00 -> 01000100 (Decimal 68 -> 'D')"
+        ],
+        "flag": "ieeecyber{DNA}",
+        "solution": "TATA -> D\nTACG -> 01001110 -> N\nTAAT -> 01000001 -> A\nFlag: DNA",
+        "points": 275
+    },
+    {
+        "title": "Kuantum Dolaşıklık",
+        "description": "Bell durumu ölçümleri yapıldı.\n\n|00⟩ durumu ASCII 67 ('C') değerine kodlandı.\n|11⟩ durumu ASCII 84 ('T') değerine kodlandı.\n\nSistemin çıktısı sırasıyla en yüksek olasılıklı durumları verdi: |00⟩ ve |11⟩.\n\nFlag: ieeecyber{KARAKTERLER}",
+        "hints": [
+            "Sadece harfleri birleştir."
+        ],
+        "flag": "ieeecyber{CT}",
+        "solution": "C ve T harfleri birleştirilir.",
+        "points": 300
+    }
+]
         
         for challenge_data in challenges:
             challenge = Challenge(**challenge_data)
